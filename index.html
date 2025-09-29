@@ -10,15 +10,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Endless Bendless Theme Colors - Infinite/Premium Mood */
-            --bg: linear-gradient(145deg, #1D2B4C 0%, #0F172A 100%); /* Deep space blue */
-            --card: rgba(23, 31, 51, 0.7); /* Translucent dark card */
-            --text: #E2E8F0; /* Slate 200 */
-            --text-secondary: #94A3B8; /* Slate 400 */
-            --accent: #A78BFA; /* Violet 400 */
-            --accent-light: #334155; /* Slate 700 */
-            --accent-gradient: linear-gradient(135deg, #C084FC 0%, #A78BFA 100%);
-            --stuck-block: linear-gradient(135deg, #5B21B6 0%, #4C1D95 100%); /* Deep violet 800/900 */
+            /* MODIFICATION: "Neon Noir" Theme for High Contrast */
+            --bg: linear-gradient(145deg, #10101b 0%, #030303 100%); /* Near-black background */
+            --card: rgba(28, 28, 40, 0.7); /* Dark translucent card */
+            --text: #EAEAEA; /* Bright off-white text */
+            --text-secondary: #A0A0B0; /* Softer grey for secondary text */
+            --accent: #00F5D4; /* Vibrant teal accent */
+            --accent-light: #212130; /* Dark blue-grey for standard grid cells */
+            --accent-gradient: linear-gradient(135deg, #00F5D4 0%, #0575E6 100%); /* Teal to Blue gradient */
+            --stuck-block: linear-gradient(135deg, #7d122e 0%, #4a0a1a 100%); /* Deep red for stuck blocks */
             
             /* Enhanced glass effects */
             --glass-primary: rgba(45, 55, 72, 0.5);
@@ -132,7 +132,7 @@
         .glass-card-prominent {
             background: linear-gradient(135deg, var(--glass-primary) 0%, rgba(45, 55, 72, 0.3) 100%);
             backdrop-filter: blur(25px) saturate(200%); -webkit-backdrop-filter: blur(25px) saturate(200%);
-            box-shadow: var(--shadow-medium), 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 40px rgba(167, 139, 250, 0.1);
+            box-shadow: var(--shadow-medium), 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 40px rgba(0, 245, 212, 0.1);
             border: none !important;
         }
         
@@ -188,14 +188,16 @@
         .shake-animation { animation: shake 0.4s ease-in-out; }
         @keyframes dice-tumble { 0% { transform: rotate(0deg) scale(1); filter: blur(0px); } 25% { transform: rotate(-90deg) scale(1.05); } 50% { transform: rotate(-180deg) scale(1.1); filter: blur(3px); } 75% { transform: rotate(-270deg) scale(1.05); } 100% { transform: rotate(-360deg) scale(1); filter: blur(0px); } }
         .dice-tumble { animation: dice-tumble 0.6s var(--ease-bounce); }
-        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4); } 50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); } }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.4); } 50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 245, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 245, 212, 0); } }
         #roll-dice-btn:not(:disabled) { animation: pulse 2s infinite; }
         
-        .cross-cell {
-            background: #475569 !important; /* A solid, slightly lighter slate */
+        /* MODIFICATION: Higher contrast highlight style */
+        #game-board .cross-cell {
+            background: #3a3a52 !important; /* Brighter purple-grey for highlighted cells */
+            border: 1px solid rgba(0, 245, 212, 0.2) !important; /* Subtle teal accent border */
         }
 
-        .stuck-cell { background: var(--stuck-block) !important; color: #d8b4fe; font-size: 2rem; font-weight: 600; }
+        .stuck-cell { background: var(--stuck-block) !important; color: #ff708d; font-size: 2rem; font-weight: 600; }
         .cursor-target { cursor: crosshair !important; }
         
         .modal { transition: all 0.3s var(--ease-smooth); }
@@ -307,9 +309,9 @@
                  </ul>
                  <h3 class="font-bold text-lg" style="color: var(--accent);">Scoring</h3>
                  <ul class="list-disc list-inside space-y-1"><li><b>3 in a line:</b> 3 points</li><li><b>4 in a line:</b> 8 points</li><li><b>5 in a line:</b> 10 points</li><li><b>6 in a line:</b> 14 points</li><li><b>7 in a line:</b> 20 points</li>
-                 <li><b>Twinning Bonus:</b> Scores on the 4th row or 4th column are doubled!</li>
+                 <li><b>Twinning Bonus:</b> Scores on the special highlighted pattern are doubled!</li>
                  <li><b>Grid Bonus:</b> 2x2, 3x3, etc. grids of the same Alloha give bonus points (size * size).</li>
-                 <li><b>Penalty:</b> A row or column that can no longer form a 3-symbol sequence gets a -5 penalty. A "dead" line on the twinning gets a -10 penalty.</li></ul>
+                 <li><b>Penalty:</b> A row or column that can no longer form a 3-symbol sequence gets a -5 penalty. A "dead" line on a twinning line gets a -10 penalty.</li></ul>
             </div>
         </div>
     </div>
@@ -350,17 +352,19 @@
         
         class Game {
             constructor() {
-                this.ENDLESS_SYMBOLS = { 'Infinity': '♾️', 'Chain': '🔗', 'Gear': '⚙️', 'DNA': '🧬', 'Web': '🕸️', 'Snowflake': '❄️' };
+                // MODIFICATION: Replaced Infinity symbol
+                this.ENDLESS_SYMBOLS = { 'Atom': '⚛️', 'Chain': '🔗', 'Gear': '⚙️', 'DNA': '🧬', 'Web': '🕸️', 'Snowflake': '❄️' };
                 this.SPECIAL_SYMBOLS = { 'WILD': '💎', 'CURSED': '☠️' };
                 this.SYMBOLS = Object.values(this.ENDLESS_SYMBOLS);
+                // MODIFICATION: Updated symbol colors for the "Neon Noir" theme
                 this.SYMBOL_COLORS = { 
-                    '♾️': 'text-amber-400',
-                    '🔗': 'text-slate-400',
-                    '⚙️': 'text-slate-300',
-                    '🧬': 'text-sky-400',
+                    '⚛️': 'text-fuchsia-400',
+                    '🔗': 'text-slate-300',
+                    '⚙️': 'text-amber-400',
+                    '🧬': 'text-lime-400',
                     '🕸️': 'text-white',
-                    '❄️': 'text-cyan-400',
-                    '💎': 'text-cyan-300'
+                    '❄️': 'text-sky-300',
+                    '💎': 'text-yellow-300'
                 };
                 this.SCORING_RULES = { 7: 20, 6: 14, 5: 10, 4: 8, 3: 3 };
                 this.GRID_SIZE = 7; this.MAX_TURNS = 24; this.CROSS_MULTIPLIER = 2; this.LINE_DEATH_PENALTY = -5; this.CROSS_DEATH_PENALTY = -10; this.STUCK_BLOCK_PENALTY = -1; this.MIN_SEQUENCE_LENGTH = 3;
@@ -562,7 +566,27 @@
             }
 
             createCellElement(r, c) { const cell = document.createElement('div'); cell.dataset.row = r; cell.dataset.col = c; cell.className = this.getCellClasses(r, c); return cell; }
-            getCellClasses(r, c) { let classes = 'grid-cell'; if (r === 3 || c === 3) classes += ' cross-cell'; if (this.stuckBlocks.has(`${r},${c}`)) classes += ' stuck-cell'; return classes; }
+            
+            // MODIFICATION: Logic for the new complex Twinning pattern
+            getCellClasses(r, c) {
+                let classes = 'grid-cell';
+                const isTwinningCell =
+                    (c === 0 && r >= 3) || // Col 1, Rows 4-7
+                    (c === 3) ||             // Full Col 4
+                    (c === 6 && r <= 3) || // Col 7, Rows 1-4
+                    (r === 0 && c >= 3) || // Row 1, Cols 4-7
+                    (r === 3) ||             // Full Row 4
+                    (r === 6 && c <= 3);   // Row 7, Cols 1-4
+                
+                if (isTwinningCell) {
+                    classes += ' cross-cell';
+                }
+                if (this.stuckBlocks.has(`${r},${c}`)) {
+                    classes += ' stuck-cell';
+                }
+                return classes;
+            }
+            
             updateCell(cell, r, c) { const symbol = this.gridData[r][c]; cell.className = this.getCellClasses(r, c); if (symbol) { cell.textContent = symbol; if(this.SYMBOL_COLORS[symbol]) cell.classList.add(...this.SYMBOL_COLORS[symbol].split(' ')); cell.classList.add('pop-in'); } else if (this.stuckBlocks.has(`${r},${c}`)) { cell.textContent = '💣'; } else { cell.textContent = ''; } }
             addCellEventListeners(cell) { cell.addEventListener('click', this.handleCellClick.bind(this)); cell.addEventListener('mouseenter', () => { if (this.gameStateManager.is('AWAITING_PLACEMENT') || this.activeSuperpower) this.audioPlay('hover'); }); }
 
@@ -656,11 +680,7 @@
                     this.saveStateForUndo();
                     this.gameStateManager.setState('AWAITING_PLACEMENT');
                     this.updateControlsState();
-                    
-                    // --- THIS IS THE NEW LINE TO ADD ---
                     this.updateSuperpowerButtonsUI();
-                    // ------------------------------------
-
                 }, 600);
             }
 
@@ -724,16 +744,99 @@
             calculateRowScores() { let t = 0, ind = []; for (let i = 0; i < this.GRID_SIZE; i++) { const { score: s } = this.calculateLineScore(this.gridData[i], 'row', i); ind.push(s); t += s; } return { total: t, individual: ind }; }
             calculateColumnScores() { let t = 0, ind = []; for (let i = 0; i < this.GRID_SIZE; i++) { const col = this.gridData.map(row => row[i]); const { score: s } = this.calculateLineScore(col, 'col', i); ind.push(s); t += s; } return { total: t, individual: ind }; }
             
+            // MODIFICATION: Logic for the new complex Twinning pattern scoring
             calculateCrossScore() {
                 let bonusScore = 0;
-                const crossRow = this.gridData[3];
-                const crossCol = this.gridData.map(row => row[3]);
-                const rowResult = this.calculateLineScore(crossRow, 'row', 3);
-                const colResult = this.calculateLineScore(crossCol, 'col', 3);
-                if (rowResult.score > 0) { bonusScore += rowResult.score; } 
-                else if (rowResult.score === this.LINE_DEATH_PENALTY) { bonusScore += this.CROSS_DEATH_PENALTY - this.LINE_DEATH_PENALTY; }
-                if (colResult.score > 0) { bonusScore += colResult.score; } 
-                else if (colResult.score === this.LINE_DEATH_PENALTY) { bonusScore += this.CROSS_DEATH_PENALTY - this.LINE_DEATH_PENALTY; }
+
+                const getScoreForSegment = (segmentSymbols, segmentCoords) => {
+                    let score = 0;
+                    const usedIndices = Array(segmentSymbols.length).fill(false);
+                    const localScoringRules = { 7: 20, 6: 14, 5: 10, 4: 8, 3: 3 };
+
+                    for (let len = segmentSymbols.length; len >= this.MIN_SEQUENCE_LENGTH; len--) {
+                        if (!localScoringRules[len]) continue;
+                        for (let i = 0; i <= segmentSymbols.length - len; i++) {
+                            if (usedIndices.slice(i, i + len).some(used => used)) continue;
+                            
+                            const slice = segmentSymbols.slice(i, i + len);
+                            if (this.isValidSequence(slice)) {
+                                score += localScoringRules[len];
+                                for (let k = 0; k < len; k++) {
+                                    if (slice[k] !== this.SPECIAL_SYMBOLS.WILD) {
+                                        usedIndices[i + k] = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (score > 0) return score;
+
+                    let isDead = true;
+                    if (segmentCoords.length >= this.MIN_SEQUENCE_LENGTH) {
+                        for (let i = 0; i <= segmentCoords.length - this.MIN_SEQUENCE_LENGTH; i++) {
+                            const windowCoords = segmentCoords.slice(i, i + this.MIN_SEQUENCE_LENGTH);
+                            const windowSymbols = windowCoords.map(coord => this.gridData[coord.r][coord.c]);
+                            
+                            let isWindowWinnable = true;
+                            if (windowSymbols.includes(this.SPECIAL_SYMBOLS.CURSED)) {
+                                isWindowWinnable = false;
+                            }
+                            if (isWindowWinnable) {
+                                for (const coord of windowCoords) {
+                                    if (this.stuckBlocks.has(`${coord.r},${coord.c}`)) {
+                                        isWindowWinnable = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isWindowWinnable) {
+                                const regularSymbols = windowSymbols.filter(s => s && s !== this.SPECIAL_SYMBOLS.WILD);
+                                if (new Set(regularSymbols).size > 1) {
+                                    isWindowWinnable = false;
+                                }
+                            }
+
+                            if (isWindowWinnable) {
+                                isDead = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        isDead = !segmentSymbols.includes(null);
+                    }
+
+                    if (isDead) {
+                        return this.CROSS_DEATH_PENALTY - this.LINE_DEATH_PENALTY;
+                    }
+
+                    return 0;
+                };
+                
+                const segments = [
+                    { type: 'col', index: 0, start: 3, end: 6 }, // C1, R4-7
+                    { type: 'col', index: 3, start: 0, end: 6 }, // C4, Full
+                    { type: 'col', index: 6, start: 0, end: 3 }, // C7, R1-4
+                    { type: 'row', index: 0, start: 3, end: 6 }, // R1, C4-7
+                    { type: 'row', index: 3, start: 0, end: 6 }, // R4, Full
+                    { type: 'row', index: 6, start: 0, end: 3 }  // R7, C1-4
+                ];
+
+                segments.forEach(seg => {
+                    const segmentSymbols = [];
+                    const segmentCoords = [];
+                    for (let i = seg.start; i <= seg.end; i++) {
+                        if (seg.type === 'row') {
+                            segmentSymbols.push(this.gridData[seg.index][i]);
+                            segmentCoords.push({ r: seg.index, c: i });
+                        } else {
+                            segmentSymbols.push(this.gridData[i][seg.index]);
+                            segmentCoords.push({ r: i, c: seg.index });
+                        }
+                    }
+                    bonusScore += getScoreForSegment(segmentSymbols, segmentCoords);
+                });
+
                 return bonusScore;
             }
 
