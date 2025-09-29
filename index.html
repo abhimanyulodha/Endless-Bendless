@@ -18,7 +18,6 @@
             --accent: #A78BFA; /* Violet 400 */
             --accent-light: #334155; /* Slate 700 */
             --accent-gradient: linear-gradient(135deg, #C084FC 0%, #A78BFA 100%);
-            --cross-highlight: linear-gradient(135deg, #475569 0%, #334155 100%); /* Slate 600 to 700 */
             --stuck-block: linear-gradient(135deg, #5B21B6 0%, #4C1D95 100%); /* Deep violet 800/900 */
             
             /* Enhanced glass effects */
@@ -192,7 +191,11 @@
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4); } 50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); } }
         #roll-dice-btn:not(:disabled) { animation: pulse 2s infinite; }
         
-        .cross-cell { background: var(--cross-highlight) !important; }
+        .cross-cell {
+            background: #475569 !important; /* A solid, slightly lighter slate */
+            box-shadow: inset 0 0 0 2px rgba(167, 139, 250, 0.4); /* A soft inner glow using the accent color */
+        }
+
         .stuck-cell { background: var(--stuck-block) !important; color: #d8b4fe; font-size: 2rem; font-weight: 600; }
         .cursor-target { cursor: crosshair !important; }
         
